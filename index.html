@@ -76,28 +76,6 @@
   }
   .cta:active { transform: scale(0.98); box-shadow: 0 6px 18px -8px rgba(26,135,255,0.7); }
 
-  .safari {
-    display: block;
-    margin-top: 12px;
-    background: transparent;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.97rem;
-    font-weight: 600;
-    line-height: 1.3;
-    padding: 14px 20px;
-    border: 1px solid #2c3c66;
-    border-radius: 15px;
-  }
-  .safari small {
-    display: block;
-    font-size: 0.76rem;
-    font-weight: 500;
-    color: var(--muted);
-    margin-top: 3px;
-  }
-  .safari:active { background: rgba(26,135,255,0.10); }
-
   .copy {
     display: block; width: 100%;
     margin-top: 12px;
@@ -187,13 +165,8 @@
   </header>
 
   <a class="cta" id="store" href="https://apps.apple.com/app/apple-store/id6798644432?pt=128936014&amp;ct=TikTok&amp;mt=8">
-    Im App Store öffnen
-    <small>Open in the App Store</small>
-  </a>
-
-  <a class="safari" id="safari" href="#">
-    In Safari öffnen
-    <small>Open in Safari — works when the button above does not</small>
+    Im App Store laden
+    <small>Get it on the App Store</small>
   </a>
 
   <button class="copy" id="copy" type="button">Link kopieren · Copy link</button>
@@ -229,36 +202,41 @@
   var storeLink = document.getElementById('store');
   var httpsUrl  = storeLink.href;
 
-  // Derselbe Link in den beiden Schreibweisen, die ein eingebetteter Browser
-  // an das System durchreichen DARF:
-  //   itms-apps://  -> bittet iOS direkt um die App-Store-App
-  //   x-safari-     -> bittet iOS, die Adresse in Safari zu oeffnen
-  var itmsUrl   = httpsUrl.replace(/^https:\/\//, 'itms-apps://');
-  var safariUrl = 'x-safari-' + httpsUrl;
+  // TikToks eingebauter Browser darf die App-Store-App nicht starten.
+  // x-safari- bittet iOS, die Adresse in Safari zu oeffnen - und Safari
+  // reicht sie an den App Store weiter. Fuer den Nutzer ist es ein Tipp.
+  // Ausserhalb einer solchen App (Safari, Chrome, Rechner) ist der Praefix
+  // unbekannt und wuerde ins Leere laufen, deshalb wird er nur dort
+  // benutzt, wo er gebraucht wird.
+  var eingebettet = (function () {
+    var ua = navigator.userAgent || '';
+    var iOS = /iPhone|iPad|iPod/.test(ua);
+    if (!iOS) { return false; }
+    // Safari selbst meldet "Safari" in der Kennung, ein eingebetteter
+    // Browser (TikTok, Instagram, Facebook) tut das nicht.
+    return !/Safari/.test(ua) || /TikTok|BytedanceWebview|musical_ly|Instagram|FBAN|FBAV|Line|Snapchat/i.test(ua);
+  })();
 
-  document.getElementById('safari').href = safariUrl;
-
-  // Weg 1: erst itms-apps versuchen, und wenn die Seite danach noch da ist,
-  // auf den gewoehnlichen Link zurueckfallen. Sichtbar bleiben heisst:
-  // es hat nicht funktioniert.
   storeLink.addEventListener('click', function (e) {
+    if (!eingebettet) { return; }   // normaler Browser: Link einfach folgen
     e.preventDefault();
+
     var weg = false;
     function merken() { if (document.hidden) { weg = true; } }
     document.addEventListener('visibilitychange', merken);
 
-    try { window.location.href = itmsUrl; } catch (err) {}
+    try { window.location.href = 'x-safari-' + httpsUrl; } catch (err) {}
 
+    // Nichts passiert? Dann den gewoehnlichen Link nachschieben, damit der
+    // Knopf nie voellig wirkungslos bleibt.
     setTimeout(function () {
       document.removeEventListener('visibilitychange', merken);
       if (!weg && !document.hidden) {
         window.location.href = httpsUrl;
       }
-    }, 900);
+    }, 1200);
   });
 
-  // Kopieren gibt immer den gewoehnlichen Link weiter - der laesst sich
-  // ueberall einfuegen.
   var btn = document.getElementById('copy');
   var label = btn.textContent;
 
