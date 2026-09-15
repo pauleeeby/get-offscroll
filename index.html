@@ -76,6 +76,28 @@
   }
   .cta:active { transform: scale(0.98); box-shadow: 0 6px 18px -8px rgba(26,135,255,0.7); }
 
+  .safari {
+    display: block;
+    margin-top: 12px;
+    background: transparent;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.97rem;
+    font-weight: 600;
+    line-height: 1.3;
+    padding: 14px 20px;
+    border: 1px solid #2c3c66;
+    border-radius: 15px;
+  }
+  .safari small {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .safari:active { background: rgba(26,135,255,0.10); }
+
   .copy {
     display: block; width: 100%;
     margin-top: 12px;
@@ -169,6 +191,11 @@
     <small>Open in the App Store</small>
   </a>
 
+  <a class="safari" id="safari" href="#">
+    In Safari öffnen
+    <small>Open in Safari — works when the button above does not</small>
+  </a>
+
   <button class="copy" id="copy" type="button">Link kopieren · Copy link</button>
 
   <div class="hint">
@@ -199,7 +226,39 @@
 
 <script>
 (function () {
-  var url = document.getElementById('store').href;
+  var storeLink = document.getElementById('store');
+  var httpsUrl  = storeLink.href;
+
+  // Derselbe Link in den beiden Schreibweisen, die ein eingebetteter Browser
+  // an das System durchreichen DARF:
+  //   itms-apps://  -> bittet iOS direkt um die App-Store-App
+  //   x-safari-     -> bittet iOS, die Adresse in Safari zu oeffnen
+  var itmsUrl   = httpsUrl.replace(/^https:\/\//, 'itms-apps://');
+  var safariUrl = 'x-safari-' + httpsUrl;
+
+  document.getElementById('safari').href = safariUrl;
+
+  // Weg 1: erst itms-apps versuchen, und wenn die Seite danach noch da ist,
+  // auf den gewoehnlichen Link zurueckfallen. Sichtbar bleiben heisst:
+  // es hat nicht funktioniert.
+  storeLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    var weg = false;
+    function merken() { if (document.hidden) { weg = true; } }
+    document.addEventListener('visibilitychange', merken);
+
+    try { window.location.href = itmsUrl; } catch (err) {}
+
+    setTimeout(function () {
+      document.removeEventListener('visibilitychange', merken);
+      if (!weg && !document.hidden) {
+        window.location.href = httpsUrl;
+      }
+    }, 900);
+  });
+
+  // Kopieren gibt immer den gewoehnlichen Link weiter - der laesst sich
+  // ueberall einfuegen.
   var btn = document.getElementById('copy');
   var label = btn.textContent;
 
@@ -210,19 +269,19 @@
     }
     function fallback() {
       var f = document.createElement('textarea');
-      f.value = url;
+      f.value = httpsUrl;
       f.setAttribute('readonly', '');
       f.style.position = 'fixed';
       f.style.top = '-1000px';
       document.body.appendChild(f);
       f.select();
-      f.setSelectionRange(0, url.length);
+      f.setSelectionRange(0, httpsUrl.length);
       try { document.execCommand('copy'); done(); }
-      catch (e) { btn.textContent = url; }
+      catch (e) { btn.textContent = httpsUrl; }
       document.body.removeChild(f);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(done, fallback);
+      navigator.clipboard.writeText(httpsUrl).then(done, fallback);
     } else {
       fallback();
     }
