@@ -29,6 +29,15 @@
   .wrap { max-width: 400px; margin: 0 auto; text-align: center; }
   [hidden] { display: none !important; }
 
+  /* ---- Sprache: Englisch ist der Standard, auch ohne JavaScript.
+         Ein deutsches Geraet bekommt <html class="de">. ---- */
+  .de-txt { display: none; }
+  html.de .de-txt { display: inline; }
+  html.de .en-txt { display: none; }
+  .steps .de-txt, .steps .en-txt { display: none; }
+  html.de .steps .de-txt { display: block; }
+  html:not(.de) .steps .en-txt { display: block; }
+
   /* ============ Gemeinsames ============ */
   .icon {
     width: 88px; height: 88px;
@@ -48,11 +57,10 @@
   }
   .tagline {
     color: var(--muted);
-    font-size: 1.02rem;
+    font-size: 1.04rem;
     line-height: 1.45;
     margin: 0 0 32px;
   }
-  .tagline .de { display: block; font-size: 0.9rem; opacity: 0.72; margin-top: 5px; }
 
   .cta {
     display: block;
@@ -62,16 +70,9 @@
     font-size: 1.08rem;
     font-weight: 600;
     line-height: 1.3;
-    padding: 16px 20px;
+    padding: 17px 20px;
     border-radius: 15px;
     box-shadow: 0 12px 30px -10px rgba(26,135,255,0.75);
-  }
-  .cta small {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 500;
-    opacity: 0.8;
-    margin-top: 3px;
   }
   .cta:active { transform: scale(0.98); }
 
@@ -89,31 +90,27 @@
   }
   .copy:active { color: var(--text); border-color: #2c3c66; }
 
-  /* ============ 1. Bildschirm: raus aus dem App-Browser ============ */
+  /* ============ 1. Raus aus dem App-Browser ============ */
   #escape { padding-top: 30px; }
 
-  .pointer {
-    position: relative;
-    height: 96px;
-    margin: 0 0 6px;
-  }
+  .pointer { position: relative; height: 96px; margin: 0 0 6px; }
   .pointer svg {
     position: absolute;
     top: 0; right: 4px;
     width: 92px; height: 92px;
     overflow: visible;
+    animation: nudge 1.9s ease-in-out infinite;
   }
   @keyframes nudge {
     0%, 100% { transform: translate(0, 0); }
     50%      { transform: translate(4px, -4px); }
   }
-  .pointer svg { animation: nudge 1.9s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .pointer svg { animation: none; } }
 
-  #escape h1 { font-size: 1.62rem; margin-bottom: 8px; }
+  #escape h1 { font-size: 1.66rem; margin-bottom: 10px; }
   #escape .lead {
     color: var(--muted);
-    font-size: 0.97rem;
+    font-size: 0.99rem;
     line-height: 1.5;
     margin: 0 0 26px;
   }
@@ -129,14 +126,14 @@
   .steps li {
     display: grid;
     grid-template-columns: 30px 1fr;
-    align-items: start;
+    align-items: center;
     gap: 13px;
-    padding: 14px 16px;
+    padding: 15px 16px;
     background: rgba(20,31,56,0.72);
     border: 1px solid var(--border);
     border-radius: 15px;
-    font-size: 0.95rem;
-    line-height: 1.45;
+    font-size: 0.98rem;
+    line-height: 1.4;
   }
   .steps .n {
     width: 30px; height: 30px;
@@ -150,16 +147,10 @@
     justify-content: center;
   }
   .steps b { font-weight: 600; }
-  .steps .en {
-    display: block;
-    color: var(--muted);
-    font-size: 0.83rem;
-    margin-top: 3px;
-  }
 
-  /* ============ 2. Bildschirm: Weiterleitung ============ */
+  /* ============ 2. Weiterleitung ============ */
   #sending { padding-top: 120px; }
-  #sending p { color: var(--muted); font-size: 0.97rem; line-height: 1.5; margin: 0 0 26px; }
+  #sending p { color: var(--muted); font-size: 0.99rem; line-height: 1.5; margin: 0 0 26px; }
   .spinner {
     width: 30px; height: 30px;
     margin: 0 auto 22px;
@@ -171,7 +162,7 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
 
-  /* ============ 3. Bildschirm: die Seite selbst ============ */
+  /* ============ 3. Die Seite selbst ============ */
   #page header { padding-top: 64px; }
 
   .shot { margin-top: 48px; position: relative; }
@@ -199,11 +190,10 @@
     position: relative;
     margin: 20px auto 0;
     max-width: 300px;
-    font-size: 0.87rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     color: var(--muted);
   }
-  .caption .de { display: block; opacity: 0.72; margin-top: 4px; }
 
   footer { margin-top: 46px; font-size: 0.82rem; text-align: center; }
   footer a { color: var(--muted); text-decoration: none; margin: 0 10px; }
@@ -211,10 +201,7 @@
 </head>
 <body>
 
-<!-- ============================================================
-     1. In TikTok, Instagram & Co: den Nutzer hinausbegleiten.
-     Standardmaessig versteckt - ohne JavaScript sieht man die Seite.
-     ============================================================ -->
+<!-- ===== 1. In TikTok & Co: den Nutzer hinausbegleiten ===== -->
 <div class="wrap" id="escape" hidden>
 
   <div class="pointer" aria-hidden="true">
@@ -228,95 +215,91 @@
     </svg>
   </div>
 
-  <h1>Noch ein Schritt</h1>
+  <h1><span class="de-txt">Noch ein Schritt</span><span class="en-txt">One more step</span></h1>
+
   <p class="lead">
-    TikTok darf den App Store nicht selbst öffnen. Im Browser deines iPhones
-    klappt es sofort.
-    <span class="de" style="display:block;opacity:.72;font-size:.87rem;margin-top:6px">
-      TikTok is not allowed to open the App Store. Your iPhone's browser can.
-    </span>
+    <span class="de-txt">TikTok darf den App Store nicht selbst öffnen. Im Browser deines Telefons klappt es sofort.</span>
+    <span class="en-txt">TikTok is not allowed to open the App Store. Your phone’s browser can.</span>
   </p>
 
   <ol class="steps">
     <li>
       <span class="n">1</span>
       <span>
-        <b>Tippe oben rechts auf •••</b>
-        <span class="en">Tap ••• in the top right corner</span>
+        <b class="de-txt">Tippe oben rechts auf •••</b>
+        <b class="en-txt">Tap ••• in the top right corner</b>
       </span>
     </li>
     <li>
       <span class="n">2</span>
       <span>
-        <b>Wähle „Im Browser öffnen"</b>
-        <span class="en">Choose “Open in browser”</span>
+        <b class="de-txt">Wähle „Im Browser öffnen"</b>
+        <b class="en-txt">Choose “Open in browser”</b>
       </span>
     </li>
     <li>
       <span class="n">3</span>
       <span>
-        <b>Der App Store öffnet sich von allein</b>
-        <span class="en">The App Store opens by itself</span>
+        <b class="de-txt">Der App Store öffnet sich von allein</b>
+        <b class="en-txt">The App Store opens by itself</b>
       </span>
     </li>
   </ol>
 
-  <button class="copy" id="copy-escape" type="button">Link kopieren · Copy link</button>
+  <button class="copy" type="button" data-copy>
+    <span class="de-txt">Link kopieren</span><span class="en-txt">Copy link</span>
+  </button>
 </div>
 
 
-<!-- ============================================================
-     2. Im richtigen Browser: sofort weiter in den App Store.
-     ============================================================ -->
+<!-- ===== 2. Im richtigen Browser: direkt weiter ===== -->
 <div class="wrap" id="sending" hidden>
   <div class="spinner" aria-hidden="true"></div>
   <h1>OffScroll</h1>
   <p>
-    Der App Store öffnet sich …
-    <span class="de" style="display:block;opacity:.72;font-size:.87rem;margin-top:5px">
-      Opening the App Store …
-    </span>
+    <span class="de-txt">Der App Store öffnet sich …</span>
+    <span class="en-txt">Opening the App Store …</span>
   </p>
   <a class="cta" id="store-sending" href="#">
-    Nicht passiert? Hier tippen
-    <small>Nothing happened? Tap here</small>
+    <span class="de-txt">Nicht passiert? Hier tippen</span>
+    <span class="en-txt">Nothing happened? Tap here</span>
   </a>
 </div>
 
 
-<!-- ============================================================
-     3. Die Seite selbst - Rechner, und alles ohne JavaScript.
-     ============================================================ -->
+<!-- ===== 3. Die Seite selbst ===== -->
 <div class="wrap" id="page">
 
   <header>
     <img class="icon" src="offscroll-icon.png" alt="OffScroll" width="88" height="88">
     <h1>OffScroll</h1>
     <p class="tagline">
-      Block distracting apps. Get things done.
-      <span class="de">Ablenkende Apps blocken. Sachen erledigen.</span>
+      <span class="de-txt">Ablenkende Apps blocken. Sachen erledigen.</span>
+      <span class="en-txt">Block distracting apps. Get things done.</span>
     </p>
   </header>
 
   <a class="cta" id="store" href="https://apps.apple.com/app/apple-store/id6798644432?pt=128936014&amp;ct=TikTok&amp;mt=8">
-    Im App Store laden
-    <small>Get it on the App Store</small>
+    <span class="de-txt">Im App Store laden</span>
+    <span class="en-txt">Get it on the App Store</span>
   </a>
 
-  <button class="copy" id="copy-page" type="button">Link kopieren · Copy link</button>
+  <button class="copy" type="button" data-copy>
+    <span class="de-txt">Link kopieren</span><span class="en-txt">Copy link</span>
+  </button>
 
   <div class="shot">
     <div class="frame">
       <img src="offscroll-screen.png" alt="OffScroll" width="232">
     </div>
     <p class="caption">
-      Instead of the app, your three most important tasks.
-      <span class="de">Statt der App stehen deine drei wichtigsten Aufgaben da.</span>
+      <span class="de-txt">Statt der App stehen deine drei wichtigsten Aufgaben da.</span>
+      <span class="en-txt">Instead of the app, your three most important tasks.</span>
     </p>
   </div>
 
   <footer>
-    <a href="https://offscrollsupport-ship-it.github.io/offscroll-privacy/">Privacy</a>
+    <a href="https://offscrollsupport-ship-it.github.io/offscroll-privacy/"><span class="de-txt">Datenschutz</span><span class="en-txt">Privacy</span></a>
     <a href="https://offscrollsupport-ship-it.github.io/offscroll-privacy/support.html">Support</a>
   </footer>
 
@@ -326,14 +309,22 @@
 (function () {
   var storeUrl = document.getElementById('store').href;
 
+  // --- Sprache: wie in der App. Deutsches Geraet -> Deutsch, sonst Englisch.
+  var sprachen = navigator.languages || [navigator.language || 'en'];
+  var deutsch = sprachen.some(function (l) { return /^de\b/i.test(l); });
+  if (deutsch) {
+    document.documentElement.classList.add('de');
+    document.documentElement.lang = 'de';
+  }
+
   // --- Wer schaut hier zu? -------------------------------------------
   var ua = navigator.userAgent || '';
   var iOS = /iPhone|iPad|iPod/.test(ua);
   var android = /Android/.test(ua);
 
-  // Eingebettete Browser melden sich nicht als Safari, oder nennen sich
-  // ausdruecklich. Beides pruefen, weil TikTok die Kennung schon
-  // mehrfach geaendert hat.
+  // Eingebettete Browser nennen sich entweder ausdruecklich, oder sie
+  // melden auf iOS kein "Safari". Beides pruefen, weil TikTok seine
+  // Kennung schon mehrfach geaendert hat.
   var eingebettet =
     /TikTok|BytedanceWebview|musical_ly|Instagram|FBAN|FBAV|FB_IAB|Snapchat|Line\/|Twitter|Pinterest|LinkedInApp/i.test(ua)
     || (iOS && !/Safari/.test(ua));
@@ -346,34 +337,43 @@
     });
   }
 
-  // Zum Ansehen ohne TikTok: ?ansicht=escape | sending | page
-  var erzwungen = (location.search.match(/[?&]ansicht=(escape|sending|page)/) || [])[1];
-  if (erzwungen) {
-    zeige(erzwungen);
+  // Zum Ansehen ohne TikTok: ?ansicht=escape|sending|page
+  // Sprache erzwingen: &sprache=de|en
+  var q = location.search;
+  var erzwungeneSprache = (q.match(/[?&]sprache=(de|en)/) || [])[1];
+  if (erzwungeneSprache === 'de') {
+    document.documentElement.classList.add('de');
+    document.documentElement.lang = 'de';
+  } else if (erzwungeneSprache === 'en') {
+    document.documentElement.classList.remove('de');
+    document.documentElement.lang = 'en';
+  }
+
+  var erzwungeneAnsicht = (q.match(/[?&]ansicht=(escape|sending|page)/) || [])[1];
+
+  if (erzwungeneAnsicht) {
+    zeige(erzwungeneAnsicht);
     document.getElementById('store-sending').href = storeUrl;
   } else if (eingebettet) {
-    // TikTok & Co: der Nutzer muss selbst hinaus - also sagen wir ihm wie.
     zeige('escape');
   } else if (mobil) {
-    // Richtiger Browser auf dem Telefon: hier funktioniert der Sprung.
     zeige('sending');
     document.getElementById('store-sending').href = storeUrl;
     setTimeout(function () { window.location.href = storeUrl; }, 600);
   } else {
-    // Rechner: kein App Store zum Oeffnen, also die Seite zeigen.
     zeige('page');
   }
 
-  // --- Link kopieren, auf beiden Bildschirmen ------------------------
-  ['copy-escape', 'copy-page'].forEach(function (id) {
-    var btn = document.getElementById(id);
-    if (!btn) { return; }
-    var label = btn.textContent;
+  // --- Link kopieren -------------------------------------------------
+  var fertig = document.documentElement.classList.contains('de') ? 'Kopiert' : 'Copied';
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'), function (btn) {
+    var original = btn.innerHTML;
 
     btn.addEventListener('click', function () {
       function done() {
-        btn.textContent = 'Kopiert · Copied';
-        setTimeout(function () { btn.textContent = label; }, 2200);
+        btn.textContent = fertig;
+        setTimeout(function () { btn.innerHTML = original; }, 2200);
       }
       function fallback() {
         var f = document.createElement('textarea');
